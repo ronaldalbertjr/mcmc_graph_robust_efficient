@@ -29,7 +29,7 @@ unsigned long long int** floyd_warshall(unsigned long long int **graph, int size
 		*(dist + i) = (unsigned long long int *) malloc(size * sizeof(unsigned long long int));
 		for(int j = 0; j < size; j++) {
 			
-			if( i == j) {
+			if(i == j) {
 				*(*(dist + i) + j) = 0;
 			}
 			else if (*(*(graph + i) + j) > 0) {
@@ -61,10 +61,13 @@ unsigned long long int sum_edges(unsigned long long int **graph, int size) {
 
 	for(int i = 0; i < size; i++) {
 		for(int j = 0; j < size; j++) {
+			
 			if(*(*(dist + i) + j) != MAX) {
 	        		sum += *(*(dist + i) + j);
 			}
-	       	}	
+
+			else return MAX;
+		}
 	}
 
 	return sum;
@@ -107,14 +110,43 @@ long double graph_efficiency(unsigned long long int **graph, int size) {
 	return sum * (1/( (long double) size*(size - 1)));
 }
 
+bool is_biconnected(unsigned long long int **graph, int size) {
+
+	unsigned long long int **graph_without_edge = (unsigned long long int **) malloc(size * sizeof(unsigned long long int*));
+	for(int i = 0; i < size; i++) {
+		*(graph_without_edge + i) = (unsigned long long int*) malloc(size * sizeof(unsigned long long int));
+	}
+
+	for(int i = 0; i < size; i++) {
+		for(int j = 0; j < size; j++) 
+			*(*(graph_without_edge + i) + j) = 0;
+
+		for(int k = 0; k < size; k++ ) 
+			*(*(graph_without_edge + k) + i) = 0;
+
+		if(sum_edges(graph_without_edge, size) == MAX)
+			return false;
+	}
+
+	return true;
+}
+
+
 int main() {
 	int vertices = 9;
 	int edges = 6;
 	unsigned long long **graph = gen_initial_graph(vertices, edges);
-	
+
+	for(int i = 0; i < vertices; i++) {
+		for(int j = 0; j < vertices; j++) {
+			printf("%lld ", *(*(graph + i) + j));
+		}
+		printf("\n");
+	}	
+
 	printf("%lld\n", sum_edges(graph, vertices));
 	printf("%LF\n", mean_distance(graph, vertices));
 	printf("%LF\n", graph_efficiency(graph, vertices));
-	
+	printf("%d\n", is_biconnected(graph, vertices));
 
 }
