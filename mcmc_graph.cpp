@@ -5,6 +5,7 @@
 using namespace std;
 
 unsigned long long int** gen_initial_graph(int v, int e) {
+
 	unsigned long long int **graph = (unsigned long long int**) malloc(v * sizeof(unsigned long long int *));
 	for(int i = 0; i < v; i++) {
 		*(graph + i) = (unsigned long long int *) malloc(v * sizeof(unsigned long long int));
